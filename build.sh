@@ -16,7 +16,7 @@ PACKAGES="$PACKAGES luci-app-mosdns luci-i18n-mosdns-zh-cn"
 PACKAGES="$PACKAGES luci-app-ssr-plus luci-i18n-ssr-plus-zh-cn ipset"
 
 # 界面翻译补全
-PACKAGES="$PACKAGES luci-i18n-opkg-zh-cn luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-i18n-turboacc-zh-cn"
+PACKAGES="$PACKAGES luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-i18n-turboacc-zh-cn"
 
 # 常用服务
 
