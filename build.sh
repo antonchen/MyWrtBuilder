@@ -20,7 +20,7 @@ PACKAGES="$PACKAGES luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-i18n-turb
 
 # 常用服务
 
-PACKAGES="$PACKAGES ipv6helper luci-app-vlmcsd"
+PACKAGES="$PACKAGES ipv6helper luci-app-vlmcsd luci-app-upnp luci-i18n-upnp-zh-cn"
 
 # 不需要的包
 PACKAGES="$PACKAGES -luci-app-filetransfer -luci-app-cpufreq"
