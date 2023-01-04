@@ -46,7 +46,7 @@ jobs:
         run: |
           wget $DOWNLOAD_BASE/releases/$VERSION/targets/x86/64/$VENDOR-imagebuilder-$VERSION-x86-64.Linux-x86_64.tar.xz
           tar -xvf $VENDOR-imagebuilder-$VERSION-x86-64.Linux-x86_64.tar.xz
-          rm -rf $VENDOR-imagebuilder-$VERSION-x86-64.Linux-x86_64.tar.xz
+          rm -f $VENDOR-imagebuilder-$VERSION-x86-64.Linux-x86_64.tar.xz
           cp -r $GITHUB_WORKSPACE/origin/* $GITHUB_WORKSPACE/$VENDOR-imagebuilder-$VERSION-x86-64.Linux-x86_64/
       
       - name: Download External Packages
@@ -64,11 +64,16 @@ jobs:
         run: |
           bash build.sh
 
+      - name: Remove rootfs
+        working-directory: ${{ env.VENDOR }}-imagebuilder-${{ env.VERSION }}-x86-64.Linux-x86_64
+        run: |
+          rm -f bin/targets/x86/64/*rootfs*
+
       - name: Upload Firmware to Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.VENDOR }}-${{ env.VERSION }}-x86_64-images-${{ env.DATETIME }}
-          path: ${{ env.VENDOR }}-imagebuilder-${{ env.VERSION }}-x86-64.Linux-x86_64/bin/targets/x86/64/*
+          path: ${{ env.VENDOR }}-imagebuilder-${{ env.VERSION }}-x86-64.Linux-x86_64/bin/targets/x86/64/*.img.gz
 
       - name: Upload Firmware to Release
         if: github.event.inputs.release == 'true'
@@ -76,7 +81,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
-          file: ${{ env.VENDOR }}-imagebuilder-${{ env.VERSION }}-x86-64.Linux-x86_64/bin/targets/x86/64/*
+          file: ${{ env.VENDOR }}-imagebuilder-${{ env.VERSION }}-x86-64.Linux-x86_64/bin/targets/x86/64/*.img.gz
           asset_name: ${{ github.event.repository.name }}-${{ github.sha }}
           tag: 18.06-k5.4-${{ env.DATE }}
           overwrite: true

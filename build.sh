@@ -13,7 +13,7 @@ PACKAGES="$PACKAGES luci-theme-argonv3"
 
 # 代理
 PACKAGES="$PACKAGES luci-app-mosdns luci-i18n-mosdns-zh-cn"
-PACKAGES="$PACKAGES luci-app-ssr-plus luci-i18n-ssr-plus-zh-cn ipset"
+PACKAGES="$PACKAGES luci-app-passwall luci-i18n-passwall-zh-cn ipset"
 
 # 界面翻译补全
 PACKAGES="$PACKAGES luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-i18n-turboacc-zh-cn"
@@ -23,7 +23,7 @@ PACKAGES="$PACKAGES luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-i18n-turb
 PACKAGES="$PACKAGES ipv6helper luci-app-vlmcsd"
 
 # 不需要的包
-PACKAGES="$PACKAGES -luci-app-filetransfer"
+PACKAGES="$PACKAGES -luci-app-filetransfer -luci-app-cpufreq"
 
 # 一些自定义文件
 FILES="files"
