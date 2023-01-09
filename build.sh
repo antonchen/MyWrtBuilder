@@ -19,8 +19,9 @@ PACKAGES="$PACKAGES luci-app-passwall luci-i18n-passwall-zh-cn ipset"
 PACKAGES="$PACKAGES luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-i18n-turboacc-zh-cn"
 
 # 常用服务
-
 PACKAGES="$PACKAGES ipv6helper luci-app-vlmcsd luci-app-upnp luci-i18n-upnp-zh-cn"
+# LXC
+PACKAGES="$PACKAGES luci-app-lxc"
 
 # 不需要的包
 PACKAGES="$PACKAGES -luci-app-filetransfer -luci-app-cpufreq"
