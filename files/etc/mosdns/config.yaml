@@ -1,0 +1,167 @@
+log:
+  level: warn
+  production: true
+  file: "/tmp/mosdns.log"
+
+# API 入口设置
+api:
+  http: "0.0.0.0:9080" # 在该地址启动 api 接口。
+
+# 从其他配置文件载入 plugins 插件设置。
+# include 的插件会比本配置文件中的插件先初始化。
+include: []
+
+plugins:
+  - tag: "china_ipv4"
+    type: ip_set
+    args:
+      files: "/storage/app/mosdns/rules/china_ipv4.txt"
+
+  - tag: "adlist"
+    type: domain_set
+    args:
+      files: "/storage/app/mosdns/rules/reject-list.txt"
+
+  - tag: "force-cn"
+    type: domain_set
+    args:
+      files:
+        - "/storage/app/mosdns/rules/direct-list.txt"
+        - "/storage/app/mosdns/rules/apple-cn.txt"
+        - "/storage/app/mosdns/rules/google-cn.txt"
+        - "/storage/app/mosdns/rules/force-cn.txt"
+
+  - tag: "force-nocn"
+    type: domain_set
+    args:
+      files:
+        - "/storage/app/mosdns/rules/proxy-list.txt"
+        - "/storage/app/mosdns/rules/gfw.txt"
+        - "/storage/app/mosdns/rules/force-nocn.txt"
+
+  - tag: "hosts"
+    type: hosts
+    args:
+      files: "/storage/app/mosdns/rules/hosts.txt"
+
+  - tag: "cache"
+    type: "cache"
+    args:
+      size: 10240
+      lazy_cache_ttl: 3600
+      dump_file: "/storage/app/mosdns/cache.dump"
+      dump_interval: 600
+
+  - tag: "reverse_lookup"
+    type: "reverse_lookup"
+    args:
+      size: 65535
+      ttl: 7200
+      handle_ptr: true
+
+  # 转发至本地服务器的插件
+  - tag: forward_local
+    type: forward
+    args:
+      concurrent: 1
+      upstreams:
+        - addr: 119.29.29.29
+        - addr: 114.114.114.114
+        - addr: "tls://dns.alidns.com"
+          dial_addr: "223.5.5.5"
+
+  # 转发至远程服务器的插件
+  - tag: forward_remote
+    type: forward
+    args:
+      concurrent: 2
+      upstreams:
+        - addr: tls://8.8.4.4
+          enable_pipeline: true
+          max_conns: 10
+        - addr: tls://208.67.222.222
+          enable_pipeline: true
+          max_conns: 10
+        - addr: tcp://208.67.220.220:5353
+          enable_pipeline: true
+          max_conns: 10
+
+  - tag: "primary_forward"
+    type: sequence
+    args:
+      - exec: $forward_local
+      - exec: ttl 60-3600
+      # - exec: debug_print
+      - matches:
+          - "!resp_ip $china_ipv4"
+          - "has_resp"
+        exec: drop_resp
+
+  - tag: "secondary_forward"
+    type: sequence
+    args:
+      - exec: prefer_ipv4
+      - exec: $forward_remote
+      # - exec: debug_print
+      - matches:
+          - rcode 2
+        exec: $forward_local
+      - exec: ttl 300-3600
+
+  - tag: "final_forward"
+    type: fallback
+    args:
+      primary: primary_forward
+      secondary: secondary_forward
+      threshold: 300
+      always_standby: true
+
+  - tag: main_sequence
+    type: sequence
+    args:
+      - exec: $hosts
+      - matches: has_wanted_ans
+        exec: accept
+
+      - exec: $reverse_lookup
+      - matches: has_wanted_ans
+        exec: accept
+
+      - exec: $cache
+      - matches: has_wanted_ans
+        exec: accept
+
+      - exec: query_summary qtype65
+      - matches: 
+        - qtype 65
+        exec: reject 0
+
+      - matches: qname $adlist
+        exec: black_hole 127.0.0.1 ::1 0.0.0.0
+      - matches: has_wanted_ans
+        exec: accept
+      
+      - matches: qname $force-cn
+        exec: $forward_local
+      - matches: has_wanted_ans
+        exec: accept
+
+      - matches: qname $force-nocn
+        exec: $forward_remote
+      - exec: prefer_ipv4
+      - matches: has_wanted_ans
+        exec: accept
+
+      - exec: $final_forward
+
+  - tag: "udp_server"
+    type: "udp_server"
+    args:
+      entry: main_sequence
+      listen: 0.0.0.0:5335
+
+  - tag: "tcp_server"
+    type: "tcp_server"
+    args:
+      entry: main_sequence
+      listen: 0.0.0.0:5335

@@ -10,16 +10,5 @@ config globals 'globals'
 
 config interface 'lan'
 	option type 'bridge'
-	option ifname 'eth1 eth2 eth3'
-	option proto 'static'
-	option ipaddr '10.0.0.254'
-	option netmask '255.255.255.0'
-	option ip6assign '60'
-
-config interface 'wan'
 	option ifname 'eth0'
 	option proto 'dhcp'
-	option ipv6 'auto'
-	option keepalive '0'
-	option delegate '0'
-
