@@ -15,41 +15,41 @@ plugins:
   - tag: "china_ipv4"
     type: ip_set
     args:
-      files: "/storage/app/mosdns/rules/china_ipv4.txt"
+      files: "/etc/mosdns/rules/china_ipv4.txt"
 
   - tag: "adlist"
     type: domain_set
     args:
-      files: "/storage/app/mosdns/rules/reject-list.txt"
+      files: "/etc/mosdns/rules/reject-list.txt"
 
   - tag: "force-cn"
     type: domain_set
     args:
       files:
-        - "/storage/app/mosdns/rules/direct-list.txt"
-        - "/storage/app/mosdns/rules/apple-cn.txt"
-        - "/storage/app/mosdns/rules/google-cn.txt"
-        - "/storage/app/mosdns/rules/force-cn.txt"
+        - "/etc/mosdns/rules/direct-list.txt"
+        - "/etc/mosdns/rules/apple-cn.txt"
+        - "/etc/mosdns/rules/google-cn.txt"
+        - "/etc/mosdns/rules/force-cn.txt"
 
   - tag: "force-nocn"
     type: domain_set
     args:
       files:
-        - "/storage/app/mosdns/rules/proxy-list.txt"
-        - "/storage/app/mosdns/rules/gfw.txt"
-        - "/storage/app/mosdns/rules/force-nocn.txt"
+        - "/etc/mosdns/rules/proxy-list.txt"
+        - "/etc/mosdns/rules/gfw.txt"
+        - "/etc/mosdns/rules/force-nocn.txt"
 
   - tag: "hosts"
     type: hosts
     args:
-      files: "/storage/app/mosdns/rules/hosts.txt"
+      files: "/etc/mosdns/rules/hosts.txt"
 
   - tag: "cache"
     type: "cache"
     args:
       size: 10240
       lazy_cache_ttl: 3600
-      dump_file: "/storage/app/mosdns/cache.dump"
+      dump_file: "/tmp/mosdns_cache.dump"
       dump_interval: 600
 
   - tag: "reverse_lookup"
