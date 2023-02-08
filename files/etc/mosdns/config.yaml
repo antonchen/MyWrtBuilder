@@ -82,7 +82,7 @@ plugins:
         - addr: tls://208.67.222.222
           enable_pipeline: true
           max_conns: 10
-        - addr: tcp://208.67.220.220:5353
+        - addr: tcp://208.67.220.220:53
           enable_pipeline: true
           max_conns: 10
 
@@ -158,10 +158,10 @@ plugins:
     type: "udp_server"
     args:
       entry: main_sequence
-      listen: 0.0.0.0:5335
+      listen: 0.0.0.0:53
 
   - tag: "tcp_server"
     type: "tcp_server"
     args:
       entry: main_sequence
-      listen: 0.0.0.0:5335
+      listen: 0.0.0.0:53
